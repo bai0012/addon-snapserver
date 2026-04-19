@@ -26,6 +26,7 @@ options:
   server_threads: -1
   server_datadir: "/usr/share/snapserver/snapweb"
   initial_volume: 100
+  ip_version: "both"
 schema:
   streams: str
   buffer: int
@@ -38,6 +39,7 @@ schema:
   server_threads: int
   server_datadir: str
   initial_volume: int
+  ip_version: "match(ipv4|ipv6|both)"
   stream_bis: str?
   stream_ter: str?
 ports:
