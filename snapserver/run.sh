@@ -15,6 +15,8 @@ declare tcp
 declare logging
 declare threads
 declare datadir
+declare ip_version
+declare bind_to_address
 
 config=/etc/snapserver.conf
 
@@ -23,6 +25,13 @@ if ! bashio::fs.file_exists '/etc/snapserver.conf'; then
         bashio::exit.nok "Could not create snapserver.conf file on filesystem"
 fi
 bashio::log.info "Populating snapserver.conf..."
+
+ip_version=$(bashio::config 'ip_version')
+if [[ "${ip_version}" == "ipv4" ]]; then
+    bind_to_address="0.0.0.0"
+else
+    bind_to_address="::"
+fi
 
 echo "[stream]" > "${config}"
 # Streams
@@ -56,7 +65,7 @@ echo "sampleformat = ${sampleformat}" >> "${config}"
 http=$(bashio::config 'http_enabled')
 echo "[http]" >> "${config}"
 echo "enabled = ${http}" >> "${config}"
-echo "bind_to_address = ::" >> "${config}"
+echo "bind_to_address = ${bind_to_address}" >> "${config}"
 # Datadir
 datadir=$(bashio::config 'server_datadir')
 echo "doc_root = ${datadir}" >> "${config}"
@@ -65,6 +74,7 @@ echo "doc_root = ${datadir}" >> "${config}"
 echo "[tcp]" >> "${config}"
 tcp=$(bashio::config 'tcp_enabled')
 echo "enabled = ${tcp}" >> "${config}"
+echo "bind_to_address = ${bind_to_address}" >> "${config}"
 
 # Logging
 echo "[logging]" >> "${config}"
@@ -75,6 +85,7 @@ echo "debug = ${logging}" >> "${config}"
 echo "[server]" >> "${config}"
 threads=$(bashio::config 'server_threads')
 echo "threads = ${threads}" >> "${config}"
+echo "bind_to_address = ${bind_to_address}" >> "${config}"
 
 # streaming client
 echo "[streaming_client]" >> "${config}"
